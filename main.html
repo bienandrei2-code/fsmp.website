@@ -1,0 +1,4139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSMP - Fantasy Survival Multiplayer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #00a8ff;
+            --secondary: #9c88ff;
+            --dark: #1e272e;
+            --light: #f5f6fa;
+            --accent: #ff9f43;
+            --success: #4cd137;
+            --warning: #e84118;
+            --minecraft-green: #55aa55;
+        }
+
+        /* Christmas Theme */
+        body.christmas-theme {
+            --primary: #d62e2e;
+            --secondary: #2e8b57;
+            --dark: #0a2e1d;
+            --accent: #ffd700;
+            --success: #3cb371;
+            --minecraft-green: #3cb371;
+        }
+
+        /* New Year Theme */
+        body.new-year-theme {
+            --primary: #ffd700;
+            --secondary: #c0c0c0;
+            --dark: #0f1a2a;
+            --accent: #ff6b6b;
+            --success: #4cd137;
+            --minecraft-green: #ffd700;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            line-height: 1.6;
+            transition: all 0.5s ease;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(30, 39, 46, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(0, 168, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            color: var(--accent);
+            text-shadow: 0 0 15px rgba(255, 159, 67, 0.7);
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .auth-btn {
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .login-btn {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .login-btn:hover {
+            background: rgba(0, 168, 255, 0.1);
+        }
+
+        .signup-btn {
+            background: var(--primary);
+            border: 2px solid var(--primary);
+            color: white;
+        }
+
+        .signup-btn:hover {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .theme-btn {
+            background: var(--accent);
+            border: 2px solid var(--accent);
+            color: var(--dark);
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .theme-btn:hover {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        /* Admin Control Panel */
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 3000;
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-panel.active {
+            display: flex;
+        }
+
+        .admin-panel-container {
+            background: rgba(30, 39, 46, 0.95);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--primary);
+            overflow: hidden;
+            animation: modalAppear 0.3s ease;
+        }
+
+        .admin-panel-header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .admin-panel-header h2 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .admin-panel-header p {
+            color: #aaa;
+            font-size: 1rem;
+        }
+
+        .close-admin-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-admin-panel:hover {
+            color: var(--warning);
+        }
+
+        .admin-panel-content {
+            padding: 30px;
+        }
+
+        .admin-panel-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .admin-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .admin-tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .admin-tab-content {
+            display: none;
+        }
+
+        .admin-tab-content.active {
+            display: block;
+        }
+
+        .admin-control-indicator {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--success);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 1001;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .admin-control-indicator.active {
+            display: block;
+        }
+
+        /* Password Modal */
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 4000;
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-modal.active {
+            display: flex;
+        }
+
+        .password-container {
+            background: rgba(30, 39, 46, 0.95);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            animation: modalAppear 0.3s ease;
+        }
+
+        .password-header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .password-header h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .password-content {
+            padding: 30px;
+        }
+
+        .password-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: var(--light);
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 168, 255, 0.2);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* Server Status Section */
+        .server-timer {
+            background: rgba(30, 39, 46, 0.8);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 30px;
+            position: relative;
+        }
+
+        .timer-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .timer-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+
+        .timer-status {
+            font-size: 1.2rem;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .timer-status.offline {
+            color: var(--warning);
+        }
+
+        .timer-status.delayed {
+            color: var(--accent);
+        }
+
+        .timer-status.maintenance {
+            color: #ff9f43;
+        }
+
+        .server-message {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            font-style: italic;
+            color: #ddd;
+        }
+
+        .admin-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: none;
+        }
+
+        .admin-controls.active {
+            display: block;
+        }
+
+        .admin-btn {
+            background: var(--accent);
+            color: var(--dark);
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .admin-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Server Status Buttons */
+        .server-status-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .status-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .status-btn.active {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-btn.inactive {
+            background: var(--warning);
+            color: white;
+        }
+
+        .status-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Suggestion Box */
+        .suggestion-box {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(30, 39, 46, 0.95);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 300px;
+            display: none;
+        }
+
+        .suggestion-box.active {
+            display: block;
+        }
+
+        .suggestion-box h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .suggestion-textarea {
+            width: 100%;
+            height: 100px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: var(--light);
+            padding: 10px;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+
+        .suggestion-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .suggestion-btn:hover {
+            background: var(--secondary);
+        }
+
+        /* Admin Modal */
+        .admin-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-modal.active {
+            display: flex;
+        }
+
+        .admin-container {
+            background: rgba(30, 39, 46, 0.95);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            animation: modalAppear 0.3s ease;
+        }
+
+        .admin-header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-header h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .admin-content {
+            padding: 30px;
+        }
+
+        .admin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .christmas-theme .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1545420333-23a22b00b8ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .new-year-theme .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero-content {
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(0, 168, 255, 0.7);
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px rgba(0, 168, 255, 0.7);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(0, 168, 255, 0.9), 0 0 30px rgba(0, 168, 255, 0.5);
+            }
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #ddd;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 168, 255, 0.4);
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(156, 136, 255, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary);
+            margin-left: 15px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 168, 255, 0.1);
+        }
+
+        /* Floating Elements */
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.7;
+            animation: float 15s infinite linear;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 60px;
+            height: 60px;
+            background-image: url('https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/9a/Diamond_JE3_BE3.png');
+            top: 10%;
+            left: 10%;
+            animation-duration: 20s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 50px;
+            height: 50px;
+            background-image: url('https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7c/Emerald_JE3_BE3.png');
+            top: 70%;
+            left: 80%;
+            animation-duration: 25s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            background-image: url('https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/04/Iron_Ingot_JE3_BE2.png');
+            top: 40%;
+            left: 85%;
+            animation-duration: 18s;
+        }
+
+        .floating-element:nth-child(4) {
+            width: 70px;
+            height: 70px;
+            background-image: url('https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/98/Gold_Ingot_JE4_BE2.png');
+            top: 80%;
+            left: 15%;
+            animation-duration: 22s;
+        }
+
+        /* Christmas floating elements */
+        .christmas-theme .floating-element:nth-child(1) {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/258/258833.png');
+        }
+
+        .christmas-theme .floating-element:nth-child(2) {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/258/258820.png');
+        }
+
+        .christmas-theme .floating-element:nth-child(3) {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/258/258821.png');
+        }
+
+        .christmas-theme .floating-element:nth-child(4) {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/258/258819.png');
+        }
+
+        /* New Year floating elements */
+        .new-year-theme .floating-element:nth-child(1) {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/5472/5472418.png');
+        }
+
+        .new-year-theme .floating-element:nth-child(2) {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/258/258833.png');
+        }
+
+        .new-year-theme .floating-element:nth-child(3) {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/258/258820.png');
+        }
+
+        .new-year-theme .floating-element:nth-child(4) {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/258/258821.png');
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+            100% {
+                transform: translateY(0) rotate(360deg);
+            }
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            display: inline-block;
+            position: relative;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--accent);
+        }
+
+        /* About Section */
+        .about-content {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .about-image {
+            flex: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.5s ease;
+        }
+
+        .about-image:hover {
+            transform: scale(1.03);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Features Section */
+        .features {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: rgba(30, 39, 46, 0.8);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+
+        /* Server Info Section */
+        .server-info-content {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .server-details {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .server-ip {
+            background: rgba(30, 39, 46, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            flex: 1;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .server-ip h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .ip-address {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .rules {
+            flex: 1;
+            background: rgba(30, 39, 46, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .rules h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .rules ul {
+            list-style-type: none;
+        }
+
+        .rules li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .rules li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--minecraft-green);
+            font-weight: bold;
+        }
+
+        /* Tier System Section */
+        .tier-system {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .tier-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .tier-category {
+            background: rgba(30, 39, 46, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tier-category::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .tier-category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .tier-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tier-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 5px 15px rgba(0, 168, 255, 0.3);
+        }
+
+        .tier-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .tier-description {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .tier-players {
+            list-style-type: none;
+        }
+
+        .tier-player {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .tier-player:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .tier-player:last-child {
+            border-bottom: none;
+        }
+
+        .player-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .player-name {
+            flex: 1;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 3px;
+            transition: background-color 0.2s ease;
+        }
+
+        .player-name:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .player-points {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .player-actions {
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .tier-player:hover .player-actions {
+            opacity: 1;
+        }
+
+        .player-action {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+        }
+
+        .player-action.edit:hover {
+            color: var(--primary);
+            background-color: rgba(0, 168, 255, 0.1);
+        }
+
+        .player-action.delete:hover {
+            color: #ff6b6b;
+            background-color: rgba(255, 107, 107, 0.1);
+        }
+
+        /* Tier Colors */
+        .tier-fpt1 {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+        }
+
+        .tier-fpt2 {
+            background: linear-gradient(135deg, #ffb347, #ffcc67);
+            color: #333;
+        }
+
+        .tier-fpt3 {
+            background: linear-gradient(135deg, #ff8c42, #ffa75e);
+            color: #333;
+        }
+
+        .tier-fht1 {
+            background: linear-gradient(135deg, #4cd137, #6ed955);
+            color: white;
+        }
+
+        .tier-fht2 {
+            background: linear-gradient(135deg, #3cb371, #5cc586);
+            color: white;
+        }
+
+        .tier-fht3 {
+            background: linear-gradient(135deg, #2e8b57, #4da374);
+            color: white;
+        }
+
+        .tier-fmt1 {
+            background: linear-gradient(135deg, #00a8ff, #4dc3ff);
+            color: white;
+        }
+
+        .tier-fmt2 {
+            background: linear-gradient(135deg, #0097e6, #33abeb);
+            color: white;
+        }
+
+        .tier-fmt3 {
+            background: linear-gradient(135deg, #0074b5, #1a8ac7);
+            color: white;
+        }
+
+        .tier-flt1 {
+            background: linear-gradient(135deg, #9c88ff, #b8a9ff);
+            color: white;
+        }
+
+        .tier-flt2 {
+            background: linear-gradient(135deg, #8c7ae6, #a396eb);
+            color: white;
+        }
+
+        .tier-flt3 {
+            background: linear-gradient(135deg, #6c5ce7, #8a7cec);
+            color: white;
+        }
+
+        /* Player Management Section */
+        .player-management {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .management-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .add-player-form {
+            background: rgba(30, 39, 46, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Player Rankings Section */
+        .player-rankings {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .rankings-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .rankings-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(30, 39, 46, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .rankings-table th {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .rankings-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .rankings-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rankings-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .player-rank {
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .player-rank-1 {
+            color: #ffd700;
+            font-weight: 800;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .player-rank-2 {
+            color: #c0c0c0;
+            font-weight: 700;
+        }
+
+        .player-rank-3 {
+            color: #cd7f32;
+            font-weight: 700;
+        }
+
+        .crown-icon {
+            color: #ffd700;
+            font-size: 1.2rem;
+            animation: crownGlow 2s infinite alternate;
+        }
+
+        @keyframes crownGlow {
+            from {
+                text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+            }
+            to {
+                text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.6);
+            }
+        }
+
+        .player-combat-title {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Player Interaction Buttons */
+        .player-interaction {
+            display: flex;
+            gap: 10px;
+        }
+
+        .interaction-btn {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+        }
+
+        .interaction-btn.like:hover {
+            color: var(--success);
+            background-color: rgba(76, 209, 55, 0.1);
+        }
+
+        .interaction-btn.dislike:hover {
+            color: var(--warning);
+            background-color: rgba(232, 65, 24, 0.1);
+        }
+
+        .interaction-btn.comment:hover {
+            color: var(--primary);
+            background-color: rgba(0, 168, 255, 0.1);
+        }
+
+        .interaction-count {
+            font-size: 0.8rem;
+            margin-left: 3px;
+        }
+
+        /* Ranking Section */
+        .ranking {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .ranking-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .ranking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .rank-tier {
+            background: rgba(30, 39, 46, 0.8);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .rank-tier:hover {
+            transform: translateY(-5px);
+        }
+
+        .rank-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .rank-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        /* Rank Colors */
+        .rank-s {
+            background: linear-gradient(135deg, #ff0000, #ff6b6b);
+            color: white;
+        }
+
+        .rank-a {
+            background: linear-gradient(135deg, #ff8800, #ffb347);
+            color: white;
+        }
+
+        .rank-b {
+            background: linear-gradient(135deg, #ffff00, #ffed4e);
+            color: #333;
+        }
+
+        .rank-c {
+            background: linear-gradient(135deg, #00ff00, #6ed955);
+            color: white;
+        }
+
+        .rank-d {
+            background: linear-gradient(135deg, #0088ff, #4dc3ff);
+            color: white;
+        }
+
+        .rank-e {
+            background: linear-gradient(135deg, #ff00ff, #ff8cff);
+            color: white;
+        }
+
+        .rank-f {
+            background: linear-gradient(135deg, #aa00ff, #d580ff);
+            color: white;
+        }
+
+        .rank-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .rank-description {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .rank-players {
+            list-style-type: none;
+        }
+
+        .rank-player {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .rank-player:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .rank-player:last-child {
+            border-bottom: none;
+        }
+
+        .player-name-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary);
+            border-radius: 3px;
+            color: var(--light);
+            padding: 5px 8px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .player-name-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 168, 255, 0.3);
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .team-member {
+            background: rgba(30, 39, 46, 0.8);
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            border-color: var(--primary);
+        }
+
+        .member-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .member-info {
+            padding: 20px;
+        }
+
+        .member-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            color: var(--accent);
+        }
+
+        .member-role {
+            color: var(--primary);
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        /* Authentication Modal */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-modal.active {
+            display: flex;
+        }
+
+        .auth-container {
+            background: rgba(30, 39, 46, 0.95);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            animation: modalAppear 0.3s ease;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-header h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .auth-tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .auth-content {
+            padding: 30px;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .form-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .password-strength {
+            height: 5px;
+            background: #555;
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+        }
+
+        .password-strength.weak .password-strength-bar {
+            background: var(--warning);
+            width: 33%;
+        }
+
+        .password-strength.medium .password-strength-bar {
+            background: #ffa500;
+            width: 66%;
+        }
+
+        .password-strength.strong .password-strength-bar {
+            background: var(--success);
+            width: 100%;
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            background: rgba(30, 39, 46, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            width: 200px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .user-menu.active {
+            display: block;
+        }
+
+        .user-menu-item {
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-menu-item.logout {
+            color: var(--warning);
+        }
+
+        /* Theme Selector */
+        .theme-selector {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .theme-options {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: rgba(30, 39, 46, 0.95);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 150px;
+        }
+
+        .theme-options.active {
+            display: flex;
+        }
+
+        .theme-option {
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-align: left;
+            border: none;
+            color: var(--light);
+            background: transparent;
+        }
+
+        .theme-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-option.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(10, 15, 20, 0.95);
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .footer-links {
+            list-style-type: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .server-details {
+                flex-direction: column;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links, .user-actions {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: rgba(30, 39, 46, 0.95);
+                flex-direction: column;
+                padding: 20px;
+                text-align: center;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            }
+            
+            .nav-links.active, .user-actions.active {
+                display: flex;
+            }
+            
+            .user-actions.active {
+                top: 350px;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .player-actions {
+                opacity: 1;
+            }
+
+            .theme-selector {
+                bottom: 70px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .feature-card, .server-ip, .rules, .team-member, .rank-tier, .add-player-form, .tier-category {
+                padding: 20px;
+            }
+            
+            .timer-display {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Control Indicator -->
+    <div class="admin-control-indicator" id="admin-control-indicator">
+        <i class="fas fa-user-shield"></i> ADMIN CONTROL (ACTIVE)
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo" id="admin-logo">
+                <i class="fas fa-cube"></i>
+                <span>FSMP</span>
+            </div>
+            <nav>
+                <div class="hamburger">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#server">Discord</a></li>
+                    <li><a href="#tier-system">Tier System</a></li>
+                    <li><a href="#ranking">Rankings</a></li>
+                    <li><a href="#team">Team</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <div class="user-actions" id="user-actions">
+                    <button class="auth-btn login-btn" id="login-btn">Login</button>
+                    <button class="auth-btn signup-btn" id="signup-btn">Sign Up</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- User Menu -->
+    <div class="user-menu" id="user-menu">
+        <div class="user-menu-item" id="profile-btn">
+            <i class="fas fa-user"></i> My Profile
+        </div>
+        <div class="user-menu-item" id="settings-btn">
+            <i class="fas fa-cog"></i> Settings
+        </div>
+        <div class="user-menu-item logout" id="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </div>
+    </div>
+
+    <!-- Theme Selector -->
+    <div class="theme-selector">
+        <button class="theme-btn" id="theme-toggle">
+            <i class="fas fa-palette"></i> Theme
+        </button>
+        <div class="theme-options" id="theme-options">
+            <button class="theme-option active" data-theme="normal">Normal Theme</button>
+            <button class="theme-option" data-theme="christmas">Christmas Theme</button>
+            <button class="theme-option" data-theme="new-year">New Year Theme</button>
+        </div>
+    </div>
+
+    <!-- Suggestion Box -->
+    <div class="suggestion-box" id="suggestion-box">
+        <h3>Send Suggestion</h3>
+        <textarea class="suggestion-textarea" id="suggestion-text" placeholder="Share your suggestions or feedback..."></textarea>
+        <button class="suggestion-btn" id="submit-suggestion">Submit Suggestion</button>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div class="auth-modal" id="auth-modal">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2>Join FSMP Community</h2>
+            </div>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Login</button>
+                <button class="auth-tab" data-tab="signup">Sign Up</button>
+            </div>
+            <div class="auth-content">
+                <form class="auth-form active" id="login-form">
+                    <div class="form-group">
+                        <label for="login-username">Username or Email</label>
+                        <input type="text" id="login-username" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Login</button>
+                    <div class="form-footer">
+                        <a href="#" id="forgot-password">Forgot your password?</a>
+                    </div>
+                </form>
+                
+                <form class="auth-form" id="signup-form">
+                    <div class="form-group">
+                        <label for="signup-username">Username</label>
+                        <input type="text" id="signup-username" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" class="form-control" required>
+                        <div class="password-strength" id="password-strength">
+                            <div class="password-strength-bar"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm">Confirm Password</label>
+                        <input type="password" id="signup-confirm" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Create Account</button>
+                    <div class="form-footer">
+                        By signing up, you agree to our <a href="#">Terms of Service</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="password-modal" id="password-modal">
+        <div class="password-container">
+            <div class="password-header">
+                <h2>Admin Authentication</h2>
+            </div>
+            <div class="password-content">
+                <form class="password-form" id="password-form">
+                    <div class="form-group">
+                        <label for="admin-password">Enter Admin Password</label>
+                        <input type="password" id="admin-password" class="form-control" placeholder="Enter admin password" required>
+                    </div>
+                    <div class="form-row">
+                        <button type="submit" class="btn" style="width: 100%;">Authenticate</button>
+                        <button type="button" class="btn btn-secondary" id="close-password-modal" style="width: 100%;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Control Panel -->
+    <div class="admin-panel" id="admin-panel">
+        <div class="admin-panel-container">
+            <div class="admin-panel-header">
+                <button class="close-admin-panel" id="close-admin-panel">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h2>FSMP Admin Control Panel</h2>
+                <p>Full administrative control over server settings and player management</p>
+            </div>
+            <div class="admin-panel-content">
+                <div class="admin-panel-tabs">
+                    <button class="admin-tab active" data-tab="server">Server Status</button>
+                    <button class="admin-tab" data-tab="players">Player Management</button>
+                    <button class="admin-tab" data-tab="rankings">Rankings</button>
+                </div>
+                
+                <div class="admin-tab-content active" id="server-tab">
+                    <h3 style="margin-bottom: 20px; color: var(--accent);">Server Status Control</h3>
+                    <div class="server-status-buttons">
+                        <button class="status-btn active" id="server-active">SERVER ACTIVE</button>
+                        <button class="status-btn inactive" id="server-unactive">SERVER UNACTIVE</button>
+                    </div>
+                    <form class="admin-form" id="server-status-form">
+                        <div class="form-group">
+                            <label for="server-message">Status Message</label>
+                            <textarea id="server-message" class="form-control" rows="3" placeholder="Add a custom message for players..."></textarea>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Update Server Status</button>
+                    </form>
+                </div>
+                
+                <div class="admin-tab-content" id="players-tab">
+                    <h3 style="margin-bottom: 20px; color: var(--accent);">Player Management</h3>
+                    <p style="margin-bottom: 20px;">Use the player management section on the main page to add, edit, and remove players.</p>
+                    <div class="admin-controls-info">
+                        <p><strong>Admin Controls Activated:</strong> You can now edit and remove players from all sections.</p>
+                    </div>
+                </div>
+                
+                <div class="admin-tab-content" id="rankings-tab">
+                    <h3 style="margin-bottom: 20px; color: var(--accent);">Rankings Management</h3>
+                    <p style="margin-bottom: 20px;">Use the rankings section on the main page to manage player rankings.</p>
+                    <div class="admin-controls-info">
+                        <p><strong>Admin Controls Activated:</strong> You can now add, edit, and remove players from rankings.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="floating-elements">
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+            <div class="floating-element"></div>
+        </div>
+        <div class="hero-content">
+            <h1>FSMP Minecraft Server</h1>
+            <p>Experience the ultimate Fantasy Survival Multiplayer adventure with custom plugins, events, and an amazing community!</p>
+            <a href="#server" class="btn">Join Discord</a>
+            <a href="#about" class="btn btn-secondary">Learn More</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>About FSMP</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Welcome to Fantasy Survival Multiplayer</h3>
+                    <p>FSMP is a custom Minecraft survival server with a fantasy twist. Our server features unique plugins, custom mobs, and an immersive world that will keep you engaged for hours.</p>
+                    <p>With regular events, a dedicated staff team, and an active community, FSMP offers the perfect balance of challenge and fun for both new and experienced players.</p>
+                    <p>Join us today and become part of our growing community of Minecraft enthusiasts!</p>
+                    
+                    <div class="server-timer">
+                        <div class="admin-controls" id="admin-controls">
+                            <button class="admin-btn" id="edit-server-status">
+                                <i class="fas fa-cog"></i> Edit Status
+                            </button>
+                        </div>
+                        <div class="timer-title">Server Status</div>
+                        <div class="server-status-buttons">
+                            <button class="status-btn active" id="server-active-main">SERVER ACTIVE</button>
+                            <button class="status-btn inactive" id="server-unactive-main">SERVER UNACTIVE</button>
+                        </div>
+                        <div class="timer-status active" id="server-status">Server is currently online and accepting players</div>
+                        <div class="server-message" id="server-message-display"></div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1633617477271-d4f351ff7c7c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Minecraft Fantasy World">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Server Features</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-dragon"></i>
+                    </div>
+                    <h3>Custom Mobs</h3>
+                    <p>Encounter unique fantasy creatures and challenging bosses throughout the world.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3>Economy System</h3>
+                    <p>Trade with players, set up shops, and become the wealthiest player on the server.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3>Magic & Skills</h3>
+                    <p>Master magical abilities and level up your skills to become more powerful.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Active Community</h3>
+                    <p>Join our friendly community and make new friends while exploring the world.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Regular Events</h3>
+                    <p>Participate in weekly events, competitions, and special seasonal activities.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Anti-Cheat</h3>
+                    <p>Play fair with our advanced anti-cheat system that ensures a balanced experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Server Info Section -->
+    <section id="server" class="server-info">
+        <div class="container">
+            <div class="section-title">
+                <h2>Join Our Discord</h2>
+            </div>
+            <div class="server-info-content">
+                <div class="server-details">
+                    <div class="server-ip">
+                        <h3>Join Our Discord Community</h3>
+                        <p>Click the button below to join our Discord server and connect with the FSMP community!</p>
+                        <div class="ip-address">discord.gg/fsmp</div>
+                        <p>Stay updated with announcements, events, and connect with other players!</p>
+                        <a href="#" class="btn">Join Discord</a>
+                    </div>
+                    <div class="rules">
+                        <h3>Server Rules</h3>
+                        <ul>
+                            <li>No griefing or stealing from other players</li>
+                            <li>Respect all players and staff members</li>
+                            <li>No hacking, cheating, or exploiting bugs</li>
+                            <li>Keep the chat appropriate for all ages</li>
+                            <li>No advertising other servers</li>
+                            <li>Follow staff instructions at all times</li>
+                            <li>Have fun and be creative!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tier System Section -->
+    <section id="tier-system" class="tier-system">
+        <div class="container">
+            <div class="section-title">
+                <h2>Game Mode Tiers</h2>
+            </div>
+            <div class="tier-container">
+                <div class="tier-grid" id="tier-grid">
+                    <!-- Tiers will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Player Management Section (Hidden by default) -->
+    <section id="player-management" class="player-management" style="display: none;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Player Management</h2>
+            </div>
+            <div class="management-container">
+                <div class="add-player-form">
+                    <h3 style="margin-bottom: 20px; color: var(--accent);">Add / Edit Player</h3>
+                    <form id="player-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="player-name">Player Name</label>
+                                <input type="text" id="player-name" class="form-control" placeholder="Enter player name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="player-gamemode">Game Mode</label>
+                                <select id="player-gamemode" class="form-control" required>
+                                    <option value="">Select game mode</option>
+                                    <option value="sword">Sword</option>
+                                    <option value="uhc">UHC</option>
+                                    <option value="fsmp">FSMP</option>
+                                    <option value="mace">Mace</option>
+                                    <option value="spear">Spear</option>
+                                    <option value="potion">Potion</option>
+                                    <option value="crystal">Crystal</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="player-tier">Tier</label>
+                                <select id="player-tier" class="form-control" required>
+                                    <option value="">Select tier</option>
+                                    <option value="FLT3">FLT3 (2 pts)</option>
+                                    <option value="FLT2">FLT2 (4 pts)</option>
+                                    <option value="FLT1">FLT1 (6 pts)</option>
+                                    <option value="FMT3">FMT3 (5 pts)</option>
+                                    <option value="FMT2">FMT2 (10 pts)</option>
+                                    <option value="FMT1">FMT1 (15 pts)</option>
+                                    <option value="FHT3">FHT3 (10 pts)</option>
+                                    <option value="FHT2">FHT2 (20 pts)</option>
+                                    <option value="FHT1">FHT1 (30 pts)</option>
+                                    <option value="FPT3">FPT3 (25 pts)</option>
+                                    <option value="FPT2">FPT2 (40 pts)</option>
+                                    <option value="FPT1">FPT1 (60 pts)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="player-points">Points</label>
+                                <input type="number" id="player-points" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Add Player</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Player Rankings Section -->
+    <section id="player-rankings" class="player-rankings">
+        <div class="container">
+            <div class="section-title">
+                <h2>Player Rankings</h2>
+            </div>
+            <div class="rankings-container">
+                <table class="rankings-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Total Points</th>
+                            <th>Combat Title</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankings-body">
+                        <!-- Rankings will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ranking Section -->
+    <section id="ranking" class="ranking">
+        <div class="container">
+            <div class="section-title">
+                <h2>Player Rankings</h2>
+            </div>
+            <div class="ranking-container">
+                <div class="ranking-grid">
+                    <!-- S Rank -->
+                    <div class="rank-tier">
+                        <div class="rank-header">
+                            <div class="rank-icon rank-s">S</div>
+                            <div>
+                                <div class="rank-title">S Rank</div>
+                                <div class="rank-description">Elite Players</div>
+                            </div>
+                        </div>
+                        <ul class="rank-players" id="s-rank-players">
+                            <!-- Players will be added here dynamically -->
+                        </ul>
+                    </div>
+                    
+                    <!-- A Rank -->
+                    <div class="rank-tier">
+                        <div class="rank-header">
+                            <div class="rank-icon rank-a">A</div>
+                            <div>
+                                <div class="rank-title">A Rank</div>
+                                <div class="rank-description">Advanced Players</div>
+                            </div>
+                        </div>
+                        <ul class="rank-players" id="a-rank-players">
+                            <!-- Players will be added here dynamically -->
+                        </ul>
+                    </div>
+                    
+                    <!-- B Rank -->
+                    <div class="rank-tier">
+                        <div class="rank-header">
+                            <div class="rank-icon rank-b">B</div>
+                            <div>
+                                <div class="rank-title">B Rank</div>
+                                <div class="rank-description">Skilled Players</div>
+                            </div>
+                        </div>
+                        <ul class="rank-players" id="b-rank-players">
+                            <!-- Players will be added here dynamically -->
+                        </ul>
+                    </div>
+                    
+                    <!-- C Rank -->
+                    <div class="rank-tier">
+                        <div class="rank-header">
+                            <div class="rank-icon rank-c">C</div>
+                            <div>
+                                <div class="rank-title">C Rank</div>
+                                <div class="rank-description">Intermediate Players</div>
+                            </div>
+                        </div>
+                        <ul class="rank-players" id="c-rank-players">
+                            <li class="rank-player">
+                                <div class="player-avatar">MC</div>
+                                <div class="player-name">MoonCalf30</div>
+                                <div class="player-interaction">
+                                    <button class="interaction-btn like" data-player="MoonCalf30">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        <span class="interaction-count">12</span>
+                                    </button>
+                                    <button class="interaction-btn dislike" data-player="MoonCalf30">
+                                        <i class="fas fa-thumbs-down"></i>
+                                        <span class="interaction-count">2</span>
+                                    </button>
+                                    <button class="interaction-btn comment" data-player="MoonCalf30">
+                                        <i class="fas fa-comment"></i>
+                                        <span class="interaction-count">5</span>
+                                    </button>
+                                </div>
+                                <div class="player-actions">
+                                    <button class="player-action edit" title="Edit Name">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="player-action delete" title="Remove Player">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </li>
+                            <li class="rank-player">
+                                <div class="player-avatar">CR</div>
+                                <div class="player-name">Compulsive Rat</div>
+                                <div class="player-interaction">
+                                    <button class="interaction-btn like" data-player="Compulsive Rat">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        <span class="interaction-count">8</span>
+                                    </button>
+                                    <button class="interaction-btn dislike" data-player="Compulsive Rat">
+                                        <i class="fas fa-thumbs-down"></i>
+                                        <span class="interaction-count">1</span>
+                                    </button>
+                                    <button class="interaction-btn comment" data-player="Compulsive Rat">
+                                        <i class="fas fa-comment"></i>
+                                        <span class="interaction-count">3</span>
+                                    </button>
+                                </div>
+                                <div class="player-actions">
+                                    <button class="player-action edit" title="Edit Name">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="player-action delete" title="Remove Player">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- D Rank -->
+                    <div class="rank-tier">
+                        <div class="rank-header">
+                            <div class="rank-icon rank-d">D</div>
+                            <div>
+                                <div class="rank-title">D Rank</div>
+                                <div class="rank-description">Developing Players</div>
+                            </div>
+                        </div>
+                        <ul class="rank-players" id="d-rank-players">
+                            <li class="rank-player">
+                                <div class="player-avatar">CZ</div>
+                                <div class="player-name">caezarrr</div>
+                                <div class="player-interaction">
+                                    <button class="interaction-btn like" data-player="caezarrr">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        <span class="interaction-count">15</span>
+                                    </button>
+                                    <button class="interaction-btn dislike" data-player="caezarrr">
+                                        <i class="fas fa-thumbs-down"></i>
+                                        <span class="interaction-count">3</span>
+                                    </button>
+                                    <button class="interaction-btn comment" data-player="caezarrr">
+                                        <i class="fas fa-comment"></i>
+                                        <span class="interaction-count">7</span>
+                                    </button>
+                                </div>
+                                <div class="player-actions">
+                                    <button class="player-action edit" title="Edit Name">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="player-action delete" title="Remove Player">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </li>
+                            <li class="rank-player">
+                                <div class="player-avatar">ZR</div>
+                                <div class="player-name">Zar</div>
+                                <div class="player-interaction">
+                                    <button class="interaction-btn like" data-player="Zar">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        <span class="interaction-count">10</span>
+                                    </button>
+                                    <button class="interaction-btn dislike" data-player="Zar">
+                                        <i class="fas fa-thumbs-down"></i>
+                                        <span class="interaction-count">2</span>
+                                    </button>
+                                    <button class="interaction-btn comment" data-player="Zar">
+                                        <i class="fas fa-comment"></i>
+                                        <span class="interaction-count">4</span>
+                                    </button>
+                                </div>
+                                <div class="player-actions">
+                                    <button class="player-action edit" title="Edit Name">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="player-action delete" title="Remove Player">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </li>
+                            <li class="rank-player">
+                                <div class="player-avatar">RZ</div>
+                                <div class="player-name">Rythmzz</div>
+                                <div class="player-interaction">
+                                    <button class="interaction-btn like" data-player="Rythmzz">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        <span class="interaction-count">7</span>
+                                    </button>
+                                    <button class="interaction-btn dislike" data-player="Rythmzz">
+                                        <i class="fas fa-thumbs-down"></i>
+                                        <span class="interaction-count">1</span>
+                                    </button>
+                                    <button class="interaction-btn comment" data-player="Rythmzz">
+                                        <i class="fas fa-comment"></i>
+                                        <span class="interaction-count">2</span>
+                                    </button>
+                                </div>
+                                <div class="player-actions">
+                                    <button class="player-action edit" title="Edit Name">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="player-action delete" title="Remove Player">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </li>
+                            <li class="rank-player">
+                                <div class="player-avatar">DT</div>
+                                <div class="player-name">deltatonic_</div>
+                                <div class="player-interaction">
+                                    <button class="interaction-btn like" data-player="deltatonic_">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        <span class="interaction-count">9</span>
+                                    </button>
+                                    <button class="interaction-btn dislike" data-player="deltatonic_">
+                                        <i class="fas fa-thumbs-down"></i>
+                                        <span class="interaction-count">0</span>
+                                    </button>
+                                    <button class="interaction-btn comment" data-player="deltatonic_">
+                                        <i class="fas fa-comment"></i>
+                                        <span class="interaction-count">6</span>
+                                    </button>
+                                </div>
+                                <div class="player-actions">
+                                    <button class="player-action edit" title="Edit Name">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="player-action delete" title="Remove Player">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </li>
+                            <li class="rank-player">
+                                <div class="player-avatar">DK</div>
+                                <div class="player-name">&lt;&lt;Dripku&gt;&gt;</div>
+                                <div class="player-interaction">
+                                    <button class="interaction-btn like" data-player="Dripku">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        <span class="interaction-count">11</span>
+                                    </button>
+                                    <button class="interaction-btn dislike" data-player="Dripku">
+                                        <i class="fas fa-thumbs-down"></i>
+                                        <span class="interaction-count">4</span>
+                                    </button>
+                                    <button class="interaction-btn comment" data-player="Dripku">
+                                        <i class="fas fa-comment"></i>
+                                        <span class="interaction-count">8</span>
+                                    </button>
+                                </div>
+                                <div class="player-actions">
+                                    <button class="player-action edit" title="Edit Name">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="player-action delete" title="Remove Player">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- E Rank -->
+                    <div class="rank-tier">
+                        <div class="rank-header">
+                            <div class="rank-icon rank-e">E</div>
+                            <div>
+                                <div class="rank-title">E Rank</div>
+                                <div class="rank-description">Beginner Players</div>
+                            </div>
+                        </div>
+                        <ul class="rank-players" id="e-rank-players">
+                            <li class="rank-player">
+                                <div class="player-avatar">KG</div>
+                                <div class="player-name">Kayden The GamerYT</div>
+                                <div class="player-interaction">
+                                    <button class="interaction-btn like" data-player="Kayden The GamerYT">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        <span class="interaction-count">5</span>
+                                    </button>
+                                    <button class="interaction-btn dislike" data-player="Kayden The GamerYT">
+                                        <i class="fas fa-thumbs-down"></i>
+                                        <span class="interaction-count">2</span>
+                                    </button>
+                                    <button class="interaction-btn comment" data-player="Kayden The GamerYT">
+                                        <i class="fas fa-comment"></i>
+                                        <span class="interaction-count">1</span>
+                                    </button>
+                                </div>
+                                <div class="player-actions">
+                                    <button class="player-action edit" title="Edit Name">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="player-action delete" title="Remove Player">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </li>
+                            <li class="rank-player">
+                                <div class="player-avatar">ST</div>
+                                <div class="player-name">Satoshi</div>
+                                <div class="player-interaction">
+                                    <button class="interaction-btn like" data-player="Satoshi">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        <span class="interaction-count">3</span>
+                                    </button>
+                                    <button class="interaction-btn dislike" data-player="Satoshi">
+                                        <i class="fas fa-thumbs-down"></i>
+                                        <span class="interaction-count">1</span>
+                                    </button>
+                                    <button class="interaction-btn comment" data-player="Satoshi">
+                                        <i class="fas fa-comment"></i>
+                                        <span class="interaction-count">0</span>
+                                    </button>
+                                </div>
+                                <div class="player-actions">
+                                    <button class="player-action edit" title="Edit Name">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="player-action delete" title="Remove Player">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- F Rank -->
+                    <div class="rank-tier">
+                        <div class="rank-header">
+                            <div class="rank-icon rank-f">F</div>
+                            <div>
+                                <div class="rank-title">F Rank</div>
+                                <div class="rank-description">New Players</div>
+                            </div>
+                        </div>
+                        <ul class="rank-players" id="f-rank-players">
+                            <li class="rank-player">
+                                <div class="player-avatar">XF</div>
+                                <div class="player-name">Xiao Fan</div>
+                                <div class="player-interaction">
+                                    <button class="interaction-btn like" data-player="Xiao Fan">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        <span class="interaction-count">2</span>
+                                    </button>
+                                    <button class="interaction-btn dislike" data-player="Xiao Fan">
+                                        <i class="fas fa-thumbs-down"></i>
+                                        <span class="interaction-count">0</span>
+                                    </button>
+                                    <button class="interaction-btn comment" data-player="Xiao Fan">
+                                        <i class="fas fa-comment"></i>
+                                        <span class="interaction-count">1</span>
+                                    </button>
+                                </div>
+                                <div class="player-actions">
+                                    <button class="player-action edit" title="Edit Name">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="player-action delete" title="Remove Player">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Add Player Form (Hidden by default) -->
+                <div class="add-player-form" style="display: none;">
+                    <h3 style="margin-bottom: 20px; color: var(--accent);">Add Player to Ranking</h3>
+                    <form id="add-player-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="player-name">Player Name</label>
+                                <input type="text" id="player-name" class="form-control" placeholder="Enter player name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="player-rank">Rank</label>
+                                <select id="player-rank" class="form-control" required>
+                                    <option value="">Select rank</option>
+                                    <option value="F">F Rank (Purple)</option>
+                                    <option value="E">E Rank (Pink)</option>
+                                    <option value="D">D Rank (Blue)</option>
+                                    <option value="C">C Rank (Green)</option>
+                                    <option value="B">B Rank (Yellow)</option>
+                                    <option value="A">A Rank (Orange)</option>
+                                    <option value="S">S Rank (Red)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Add Player</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="team">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Team</h2>
+            </div>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-image" style="background-image: url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80');"></div>
+                    <div class="member-info">
+                        <h3>Xiao Fan</h3>
+                        <div class="member-role">Owner (Evil Star)</div>
+                        <p>The visionary behind FSMP, creating an amazing experience for all players.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image" style="background-image: url('https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80');"></div>
+                    <div class="member-info">
+                        <h3>Astr0_ph</h3>
+                        <div class="member-role">Website Creator & Developer</div>
+                        <p>Designed and developed this amazing website and various server plugins.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80');"></div>
+                    <div class="member-info">
+                        <h3>@ִֶָ. ..𓂃 Ａｋａｒｉ ࣪ ִֶָ🪽་༘࿐</h3>
+                        <div class="member-role">Discord Moderator</div>
+                        <p>Ensures a positive and welcoming community environment for all players.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image" style="background-image: url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');"></div>
+                    <div class="member-info">
+                        <h3>@Caezarrr</h3>
+                        <div class="member-role">Discord Moderator</div>
+                        <p>Helps maintain server order and assists players with their questions.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image" style="background-image: url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80');"></div>
+                    <div class="member-info">
+                        <h3>@† Endyy !!</h3>
+                        <div class="member-role">Discord Moderator</div>
+                        <p>Keeps the community engaged and ensures everyone follows the rules.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image" style="background-image: url('https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');"></div>
+                    <div class="member-info">
+                        <h3>@Zar</h3>
+                        <div class="member-role">Assistant</div>
+                        <p>Provides support to the team and helps with various server tasks.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image" style="background-image: url('https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80');"></div>
+                    <div class="member-info">
+                        <h3>MoonCalf</h3>
+                        <div class="member-role">Co-Owner / Past Owner</div>
+                        <p>Former owner who helped shape FSMP into what it is today.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About FSMP</h3>
+                    <p>FSMP is a fantasy-themed Minecraft survival server with custom features, an active community, and regular events. Join us for an unforgettable Minecraft experience!</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-reddit"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#server">Discord</a></li>
+                        <li><a href="#tier-system">Tier System</a></li>
+                        <li><a href="#ranking">Rankings</a></li>
+                        <li><a href="#team">Our Team</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope"></i> support@fsmp.com</li>
+                        <li><i class="fas fa-globe"></i> www.fsmp-minecraft.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Global Server Network</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 FSMP Minecraft Server. Created by Astr0_ph. Owned by Xiao Fan (Evil Star). All rights reserved.</p>
+                <p>This website is not affiliated with Mojang or Microsoft.</p>
+            </div>
+        </div>
+    </footer>
+
+    
+
+    <script>
+        // Admin Control System
+        class AdminControlSystem {
+            constructor() {
+                this.adminPassword = "FSMPadmincontrolpanelbyownerandcreator1.21";
+                this.isAdminActive = false;
+                this.currentStatus = null;
+                this.init();
+            }
+            
+            init() {
+                this.loadStatus();
+                this.setupEventListeners();
+                this.updateUI();
+            }
+            
+            loadStatus() {
+                const savedStatus = localStorage.getItem('fsmpServerStatus');
+                if (savedStatus) {
+                    this.currentStatus = JSON.parse(savedStatus);
+                } else {
+                    // Default status - set to "Active" as requested
+                    this.currentStatus = {
+                        status: 'active',
+                        displayText: 'Server Active!',
+                        statusText: 'Server is currently online and accepting players',
+                        message: ''
+                    };
+                    this.saveStatus();
+                }
+            }
+            
+            saveStatus() {
+                localStorage.setItem('fsmpServerStatus', JSON.stringify(this.currentStatus));
+            }
+            
+            setupEventListeners() {
+                // Logo click to open admin panel
+                document.getElementById('admin-logo').addEventListener('click', () => {
+                    this.openPasswordModal();
+                });
+                
+                // Password form submission
+                document.getElementById('password-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handlePasswordSubmit();
+                });
+                
+                // Close password modal
+                document.getElementById('close-password-modal').addEventListener('click', () => {
+                    this.closePasswordModal();
+                });
+                
+                // Close admin panel
+                document.getElementById('close-admin-panel').addEventListener('click', () => {
+                    this.closeAdminPanel();
+                });
+                
+                // Admin panel tabs
+                document.querySelectorAll('.admin-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const tabName = e.target.getAttribute('data-tab');
+                        this.switchAdminTab(tabName);
+                    });
+                });
+                
+                // Server status form
+                document.getElementById('server-status-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleStatusUpdate();
+                });
+                
+                // Edit server status button
+                document.getElementById('edit-server-status').addEventListener('click', () => {
+                    if (this.isAdminActive) {
+                        this.openAdminPanel();
+                        this.switchAdminTab('server');
+                    }
+                });
+                
+                // Server status buttons in admin panel
+                document.getElementById('server-active').addEventListener('click', () => {
+                    this.setServerStatus('active');
+                });
+                
+                document.getElementById('server-unactive').addEventListener('click', () => {
+                    this.setServerStatus('unactive');
+                });
+                
+                // Server status buttons in main page
+                document.getElementById('server-active-main').addEventListener('click', () => {
+                    if (this.isAdminActive) {
+                        this.setServerStatus('active');
+                    }
+                });
+                
+                document.getElementById('server-unactive-main').addEventListener('click', () => {
+                    if (this.isAdminActive) {
+                        this.setServerStatus('unactive');
+                    }
+                });
+                
+                // Close modals when clicking outside
+                document.getElementById('password-modal').addEventListener('click', (e) => {
+                    if (e.target.id === 'password-modal') {
+                        this.closePasswordModal();
+                    }
+                });
+                
+                document.getElementById('admin-panel').addEventListener('click', (e) => {
+                    if (e.target.id === 'admin-panel') {
+                        this.closeAdminPanel();
+                    }
+                });
+            }
+            
+            openPasswordModal() {
+                document.getElementById('password-modal').classList.add('active');
+            }
+            
+            closePasswordModal() {
+                document.getElementById('password-modal').classList.remove('active');
+                document.getElementById('password-form').reset();
+            }
+            
+            openAdminPanel() {
+                document.getElementById('admin-panel').classList.add('active');
+            }
+            
+            closeAdminPanel() {
+                document.getElementById('admin-panel').classList.remove('active');
+            }
+            
+            handlePasswordSubmit() {
+                const password = document.getElementById('admin-password').value;
+                
+                if (password === this.adminPassword) {
+                    this.isAdminActive = true;
+                    this.activateAdminControls();
+                    this.closePasswordModal();
+                    this.openAdminPanel();
+                    this.showNotification('Admin access granted!', 'success');
+                } else {
+                    this.showNotification('Incorrect password!', 'error');
+                }
+            }
+            
+            activateAdminControls() {
+                // Show admin controls
+                document.getElementById('admin-controls').classList.add('active');
+                document.getElementById('admin-control-indicator').classList.add('active');
+                
+                // Show the hidden admin sections
+                document.getElementById('player-management').style.display = 'block';
+                document.querySelector('#ranking .add-player-form').style.display = 'block';
+                
+                // Show admin actions in player rankings
+                document.querySelectorAll('.player-actions').forEach(action => {
+                    action.style.display = 'flex';
+                });
+                
+                // Hide interaction buttons for admin
+                document.querySelectorAll('.player-interaction').forEach(interaction => {
+                    interaction.style.display = 'none';
+                });
+                
+                // Enable player management features
+                this.enablePlayerManagement();
+                this.enableRankingManagement();
+            }
+            
+            enablePlayerManagement() {
+                // Player management is already enabled through the form
+                // This function can be expanded to enable additional features
+                console.log('Player management enabled');
+            }
+            
+            enableRankingManagement() {
+                // Ranking management is already enabled through the form
+                // This function can be expanded to enable additional features
+                console.log('Ranking management enabled');
+            }
+            
+            switchAdminTab(tabName) {
+                // Update tabs
+                document.querySelectorAll('.admin-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`.admin-tab[data-tab="${tabName}"]`).classList.add('active');
+                
+                // Update content
+                document.querySelectorAll('.admin-tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+            }
+            
+            updateUI() {
+                document.getElementById('server-status').textContent = this.currentStatus.statusText;
+                
+                // Update status color
+                const statusElement = document.getElementById('server-status');
+                statusElement.className = 'timer-status';
+                statusElement.classList.add(this.currentStatus.status);
+                
+                // Update message
+                const messageElement = document.getElementById('server-message-display');
+                if (this.currentStatus.message) {
+                    messageElement.textContent = this.currentStatus.message;
+                    messageElement.style.display = 'block';
+                } else {
+                    messageElement.style.display = 'none';
+                }
+                
+                // Update status buttons
+                document.querySelectorAll('.status-btn').forEach(btn => {
+                    btn.classList.remove('active', 'inactive');
+                });
+                
+                if (this.currentStatus.status === 'active') {
+                    document.querySelectorAll('#server-active, #server-active-main').forEach(btn => {
+                        btn.classList.add('active');
+                    });
+                    document.querySelectorAll('#server-unactive, #server-unactive-main').forEach(btn => {
+                        btn.classList.add('inactive');
+                    });
+                } else {
+                    document.querySelectorAll('#server-active, #server-active-main').forEach(btn => {
+                        btn.classList.add('inactive');
+                    });
+                    document.querySelectorAll('#server-unactive, #server-unactive-main').forEach(btn => {
+                        btn.classList.add('active');
+                    });
+                }
+            }
+            
+            setServerStatus(status) {
+                if (!this.isAdminActive && status !== this.currentStatus.status) {
+                    this.showNotification('Admin access required to change server status!', 'error');
+                    return;
+                }
+                
+                let displayText, statusText;
+                
+                if (status === 'active') {
+                    displayText = 'Server Active!';
+                    statusText = 'Server is currently online and accepting players';
+                } else {
+                    displayText = 'Server Unactive';
+                    statusText = 'Server is currently offline';
+                }
+                
+                this.currentStatus = {
+                    status,
+                    displayText,
+                    statusText,
+                    message: this.currentStatus.message
+                };
+                
+                this.saveStatus();
+                this.updateUI();
+                this.showNotification('Server status updated successfully!', 'success');
+            }
+            
+            handleStatusUpdate() {
+                const message = document.getElementById('server-message').value;
+                
+                this.currentStatus.message = message;
+                
+                this.saveStatus();
+                this.updateUI();
+                this.showNotification('Server message updated successfully!', 'success');
+            }
+            
+            showNotification(message, type = 'info') {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 15px 20px;
+                    background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--warning)' : 'var(--primary)'};
+                    color: white;
+                    border-radius: 5px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                    z-index: 3000;
+                    transform: translateX(100%);
+                    transition: transform 0.3s ease;
+                `;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 100);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+        }
+
+        // Initialize admin control system
+        const adminControlSystem = new AdminControlSystem();
+
+        // Theme Selector Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeOptions = document.getElementById('theme-options');
+            const themeButtons = document.querySelectorAll('.theme-option');
+            
+            // Load saved theme from localStorage
+            const savedTheme = localStorage.getItem('fsmpTheme') || 'normal';
+            setTheme(savedTheme);
+            
+            // Toggle theme options visibility
+            themeToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                themeOptions.classList.toggle('active');
+            });
+            
+            // Close theme options when clicking outside
+            document.addEventListener('click', function() {
+                themeOptions.classList.remove('active');
+            });
+            
+            // Set theme when a theme option is clicked
+            themeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const theme = this.getAttribute('data-theme');
+                    setTheme(theme);
+                    themeOptions.classList.remove('active');
+                    
+                    // Update active state of buttons
+                    themeButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Set initial active button
+            themeButtons.forEach(button => {
+                if (button.getAttribute('data-theme') === savedTheme) {
+                    button.classList.add('active');
+                }
+            });
+            
+            function setTheme(theme) {
+                document.body.className = '';
+                if (theme !== 'normal') {
+                    document.body.classList.add(`${theme}-theme`);
+                }
+                localStorage.setItem('fsmpTheme', theme);
+            }
+        });
+
+        // Suggestion System
+        document.addEventListener('DOMContentLoaded', function() {
+            const suggestionToggle = document.getElementById('theme-toggle');
+            const suggestionBox = document.getElementById('suggestion-box');
+            const submitSuggestion = document.getElementById('submit-suggestion');
+            
+            // Toggle suggestion box visibility
+            suggestionToggle.addEventListener('click', function() {
+                suggestionBox.classList.toggle('active');
+            });
+            
+            // Close suggestion box when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!suggestionBox.contains(e.target) && e.target !== suggestionToggle) {
+                    suggestionBox.classList.remove('active');
+                }
+            });
+            
+            // Handle suggestion submission
+            submitSuggestion.addEventListener('click', function() {
+                const suggestionText = document.getElementById('suggestion-text').value.trim();
+                
+                if (suggestionText) {
+                    // Save suggestion to localStorage
+                    saveSuggestion(suggestionText);
+                    
+                    // Clear textarea
+                    document.getElementById('suggestion-text').value = '';
+                    
+                    // Show success message
+                    adminControlSystem.showNotification('Suggestion submitted successfully!', 'success');
+                    
+                    // Close suggestion box
+                    suggestionBox.classList.remove('active');
+                } else {
+                    adminControlSystem.showNotification('Please enter a suggestion!', 'error');
+                }
+            });
+            
+            function saveSuggestion(suggestion) {
+                let suggestions = JSON.parse(localStorage.getItem('fsmpSuggestions')) || [];
+                suggestions.push({
+                    text: suggestion,
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('fsmpSuggestions', JSON.stringify(suggestions));
+            }
+        });
+
+        // Player Interaction System
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load player interactions from localStorage
+            loadPlayerInteractions();
+            
+            // Add event listeners to interaction buttons
+            document.querySelectorAll('.interaction-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const playerName = this.getAttribute('data-player');
+                    const interactionType = this.classList.contains('like') ? 'like' : 
+                                          this.classList.contains('dislike') ? 'dislike' : 'comment';
+                    
+                    handlePlayerInteraction(playerName, interactionType, this);
+                });
+            });
+            
+            function handlePlayerInteraction(playerName, type, button) {
+                // Get current interactions
+                let interactions = JSON.parse(localStorage.getItem('fsmpPlayerInteractions')) || {};
+                
+                // Initialize player if not exists
+                if (!interactions[playerName]) {
+                    interactions[playerName] = {
+                        likes: 0,
+                        dislikes: 0,
+                        comments: 0
+                    };
+                }
+                
+                // Update interaction count
+                interactions[playerName][type + 's']++;
+                
+                // Save to localStorage
+                localStorage.setItem('fsmpPlayerInteractions', JSON.stringify(interactions));
+                
+                // Update button count
+                const countElement = button.querySelector('.interaction-count');
+                countElement.textContent = interactions[playerName][type + 's'];
+                
+                // Show feedback
+                adminControlSystem.showNotification(`${type.charAt(0).toUpperCase() + type.slice(1)} added for ${playerName}!`, 'success');
+            }
+            
+            function loadPlayerInteractions() {
+                const interactions = JSON.parse(localStorage.getItem('fsmpPlayerInteractions')) || {};
+                
+                // Update all interaction buttons with saved counts
+                document.querySelectorAll('.interaction-btn').forEach(button => {
+                    const playerName = button.getAttribute('data-player');
+                    const interactionType = button.classList.contains('like') ? 'likes' : 
+                                          button.classList.contains('dislike') ? 'dislikes' : 'comments';
+                    
+                    if (interactions[playerName] && interactions[playerName][interactionType]) {
+                        const countElement = button.querySelector('.interaction-count');
+                        countElement.textContent = interactions[playerName][interactionType];
+                    }
+                });
+            }
+        });
+
+        // Game Mode Tiers Data
+        const gameModes = [
+            { id: 'sword', name: 'Sword', icon: 'fa-sword' },
+            { id: 'uhc', name: 'UHC', icon: 'fa-heart' },
+            { id: 'fsmp', name: 'FSMP', icon: 'fa-cube' },
+            { id: 'mace', name: 'Mace', icon: 'fa-hammer' },
+            { id: 'spear', name: 'Spear', icon: 'fa-bullseye' },
+            { id: 'potion', name: 'Potion', icon: 'fa-flask' },
+            { id: 'crystal', name: 'Crystal', icon: 'fa-gem' }
+        ];
+
+        // Tier Points Mapping
+        const tierPoints = {
+            'FLT3': 2,
+            'FLT2': 4,
+            'FLT1': 6,
+            'FMT3': 5,
+            'FMT2': 10,
+            'FMT1': 15,
+            'FHT3': 10,
+            'FHT2': 20,
+            'FHT1': 30,
+            'FPT3': 25,
+            'FPT2': 40,
+            'FPT1': 60
+        };
+
+        // Combat Titles
+        const combatTitles = [
+            { min: 0, max: 50, title: 'Combat Novice' },
+            { min: 51, max: 120, title: 'Combat Expert' },
+            { min: 121, max: 180, title: 'Combat Ace' },
+            { min: 181, max: 240, title: 'Combat Master' },
+            { min: 241, max: 320, title: 'Combat Grandmaster' },
+            { min: 321, max: 419, title: 'Combat Legend' },
+            { min: 420, max: 420, title: 'Combat God' }
+        ];
+
+        // Players Data
+        let players = JSON.parse(localStorage.getItem('fsmpPlayers')) || [];
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize default players if none exist
+            if (players.length === 0) {
+                initializeDefaultPlayers();
+            }
+            
+            // Render game mode tiers
+            renderGameModeTiers();
+            
+            // Render player rankings
+            renderPlayerRankings();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Mobile navigation toggle
+            document.querySelector('.hamburger').addEventListener('click', function() {
+                document.querySelector('.nav-links').classList.toggle('active');
+                document.querySelector('.user-actions').classList.toggle('active');
+            });
+
+            // Close mobile menu when clicking on a link
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    document.querySelector('.nav-links').classList.remove('active');
+                    document.querySelector('.user-actions').classList.remove('active');
+                });
+            });
+            
+            // Initialize ranking system
+            initializeRankingSystem();
+            
+            // Setup authentication
+            setupAuthentication();
+        });
+
+        // Initialize default players
+        function initializeDefaultPlayers() {
+            const defaultPlayers = [
+                '@MoonCalf30', '@Zar', '@Aj', '@Kayden The GamerYT🎮🕹', '@ItzParaDox',
+                '@Caezarrr', '@Rythmzz', '@Astr0_ph🇵🇭', '@ִֶָ. ..𓂃 Ａｋａｒｉ ࣪ ִֶָ🪽་༘࿐',
+                '@deltatonic_', '@Satoshi', '@《Dripku》', '@catimai', '@Compulsive Rat',
+                '@•Xoss', '@Ray2cool', '@† Endyy !!', '@Sai', '@Teo', '@Clara_03'
+            ];
+            
+            defaultPlayers.forEach(playerName => {
+                players.push({
+                    id: generateId(),
+                    name: playerName,
+                    gameModes: {
+                        sword: 'FLT3',
+                        uhc: 'FLT3',
+                        fsmp: 'FLT3',
+                        mace: 'FLT3',
+                        spear: 'FLT3',
+                        potion: 'FLT3',
+                        crystal: 'FLT3'
+                    }
+                });
+            });
+            
+            savePlayers();
+        }
+
+        // Render game mode tiers
+        function renderGameModeTiers() {
+            const tierGrid = document.getElementById('tier-grid');
+            tierGrid.innerHTML = '';
+            
+            gameModes.forEach(gameMode => {
+                const tierCategory = document.createElement('div');
+                tierCategory.className = 'tier-category';
+                
+                const playersInMode = players.filter(player => player.gameModes[gameMode.id]);
+                
+                tierCategory.innerHTML = `
+                    <div class="tier-header">
+                        <div class="tier-icon">
+                            <i class="fas ${gameMode.icon}"></i>
+                        </div>
+                        <div>
+                            <div class="tier-title">${gameMode.name}</div>
+                            <div class="tier-description">${playersInMode.length} players</div>
+                        </div>
+                    </div>
+                    <ul class="tier-players" id="${gameMode.id}-players">
+                        ${playersInMode.map(player => `
+                            <li class="tier-player">
+                                <div class="player-avatar">${getInitials(player.name)}</div>
+                                <div class="player-name">${player.name}</div>
+                                <div class="player-points tier-${player.gameModes[gameMode.id].toLowerCase()}">${player.gameModes[gameMode.id]}</div>
+                                <div class="player-actions">
+                                    <button class="player-action edit" data-player="${player.id}" data-gamemode="${gameMode.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="player-action delete" data-player="${player.id}" data-gamemode="${gameMode.id}">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                
+                tierGrid.appendChild(tierCategory);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.player-action.edit').forEach(button => {
+                button.addEventListener('click', handleEditPlayer);
+            });
+            
+            document.querySelectorAll('.player-action.delete').forEach(button => {
+                button.addEventListener('click', handleDeletePlayer);
+            });
+        }
+
+        // Render player rankings
+        function renderPlayerRankings() {
+            const rankingsBody = document.getElementById('rankings-body');
+            rankingsBody.innerHTML = '';
+            
+            // Calculate total points for each player
+            const playersWithPoints = players.map(player => {
+                let totalPoints = 0;
+                for (const mode in player.gameModes) {
+                    totalPoints += tierPoints[player.gameModes[mode]] || 0;
+                }
+                
+                // Get combat title
+                const combatTitle = getCombatTitle(totalPoints);
+                
+                return {
+                    ...player,
+                    totalPoints,
+                    combatTitle
+                };
+            });
+            
+            // Sort players by points (descending)
+            playersWithPoints.sort((a, b) => b.totalPoints - a.totalPoints);
+            
+            // Render rankings
+            playersWithPoints.forEach((player, index) => {
+                const row = document.createElement('tr');
+                
+                // Add crown for top 3 players
+                let rankDisplay = `#${index + 1}`;
+                if (index === 0) {
+                    rankDisplay = `<i class="fas fa-crown crown-icon"></i> #${index + 1}`;
+                }
+                
+                row.innerHTML = `
+                    <td class="player-rank ${index < 3 ? `player-rank-${index + 1}` : ''}">
+                        ${rankDisplay}
+                    </td>
+                    <td>${player.name}</td>
+                    <td>${player.totalPoints}</td>
+                    <td class="player-combat-title">${player.combatTitle}</td>
+                    <td>
+                        <div class="player-interaction">
+                            <button class="interaction-btn like" data-player="${player.name}">
+                                <i class="fas fa-thumbs-up"></i>
+                                <span class="interaction-count">0</span>
+                            </button>
+                            <button class="interaction-btn dislike" data-player="${player.name}">
+                                <i class="fas fa-thumbs-down"></i>
+                                <span class="interaction-count">0</span>
+                            </button>
+                            <button class="interaction-btn comment" data-player="${player.name}">
+                                <i class="fas fa-comment"></i>
+                                <span class="interaction-count">0</span>
+                            </button>
+                        </div>
+                        <div class="player-actions" style="display: none;">
+                            <button class="player-action edit" data-player="${player.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="player-action delete" data-player="${player.id}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                rankingsBody.appendChild(row);
+            });
+            
+            // Add event listeners to interaction buttons
+            document.querySelectorAll('.interaction-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const playerName = this.getAttribute('data-player');
+                    const interactionType = this.classList.contains('like') ? 'like' : 
+                                          this.classList.contains('dislike') ? 'dislike' : 'comment';
+                    
+                    handlePlayerInteraction(playerName, interactionType, this);
+                });
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.player-action.edit').forEach(button => {
+                button.addEventListener('click', handleEditPlayer);
+            });
+            
+            document.querySelectorAll('.player-action.delete').forEach(button => {
+                button.addEventListener('click', handleDeletePlayer);
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Player form submission
+            document.getElementById('player-form').addEventListener('submit', handlePlayerFormSubmit);
+            
+            // Update points when tier changes
+            document.getElementById('player-tier').addEventListener('change', function() {
+                const points = tierPoints[this.value] || 0;
+                document.getElementById('player-points').value = points;
+            });
+        }
+
+        // Handle player form submission
+        function handlePlayerFormSubmit(e) {
+            e.preventDefault();
+            
+            const playerName = document.getElementById('player-name').value;
+            const gameMode = document.getElementById('player-gamemode').value;
+            const tier = document.getElementById('player-tier').value;
+            
+            // Check if player already exists
+            let player = players.find(p => p.name === playerName);
+            
+            if (player) {
+                // Update existing player
+                player.gameModes[gameMode] = tier;
+            } else {
+                // Create new player
+                player = {
+                    id: generateId(),
+                    name: playerName,
+                    gameModes: {}
+                };
+                player.gameModes[gameMode] = tier;
+                players.push(player);
+            }
+            
+            savePlayers();
+            renderGameModeTiers();
+            renderPlayerRankings();
+            
+            // Reset form
+            document.getElementById('player-form').reset();
+            document.getElementById('player-points').value = '';
+        }
+
+        // Handle edit player
+        function handleEditPlayer(e) {
+            const playerId = e.currentTarget.getAttribute('data-player');
+            const gameMode = e.currentTarget.getAttribute('data-gamemode');
+            
+            const player = players.find(p => p.id === playerId);
+            
+            if (player) {
+                document.getElementById('player-name').value = player.name;
+                
+                if (gameMode) {
+                    document.getElementById('player-gamemode').value = gameMode;
+                    document.getElementById('player-tier').value = player.gameModes[gameMode] || 'FLT3';
+                    document.getElementById('player-points').value = tierPoints[player.gameModes[gameMode]] || 2;
+                }
+                
+                // Scroll to form
+                document.getElementById('player-management').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Handle delete player
+        function handleDeletePlayer(e) {
+            const playerId = e.currentTarget.getAttribute('data-player');
+            const gameMode = e.currentTarget.getAttribute('data-gamemode');
+            
+            if (gameMode) {
+                // Remove player from specific game mode
+                const player = players.find(p => p.id === playerId);
+                if (player) {
+                    delete player.gameModes[gameMode];
+                    
+                    // If player has no game modes, remove them completely
+                    if (Object.keys(player.gameModes).length === 0) {
+                        players = players.filter(p => p.id !== playerId);
+                    }
+                }
+            } else {
+                // Remove player completely
+                players = players.filter(p => p.id !== playerId);
+            }
+            
+            savePlayers();
+            renderGameModeTiers();
+            renderPlayerRankings();
+        }
+
+        // Get combat title based on points
+        function getCombatTitle(points) {
+            for (const title of combatTitles) {
+                if (points >= title.min && points <= title.max) {
+                    return title.title;
+                }
+            }
+            return 'Unranked';
+        }
+
+        // Get initials from player name
+        function getInitials(name) {
+            // Remove special characters and emojis
+            const cleanName = name.replace(/[^a-zA-Z0-9 ]/g, '');
+            return cleanName
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase())
+                .join('')
+                .substring(0, 2);
+        }
+
+        // Generate unique ID
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // Save players to localStorage
+        function savePlayers() {
+            localStorage.setItem('fsmpPlayers', JSON.stringify(players));
+        }
+
+        // Player Interaction System
+        function handlePlayerInteraction(playerName, type, button) {
+            // Get current interactions
+            let interactions = JSON.parse(localStorage.getItem('fsmpPlayerInteractions')) || {};
+            
+            // Initialize player if not exists
+            if (!interactions[playerName]) {
+                interactions[playerName] = {
+                    likes: 0,
+                    dislikes: 0,
+                    comments: 0
+                };
+            }
+            
+            // Update interaction count
+            interactions[playerName][type + 's']++;
+            
+            // Save to localStorage
+            localStorage.setItem('fsmpPlayerInteractions', JSON.stringify(interactions));
+            
+            // Update button count
+            const countElement = button.querySelector('.interaction-count');
+            countElement.textContent = interactions[playerName][type + 's'];
+            
+            // Show feedback
+            adminControlSystem.showNotification(`${type.charAt(0).toUpperCase() + type.slice(1)} added for ${playerName}!`, 'success');
+        }
+
+        // Load player interactions from localStorage
+        function loadPlayerInteractions() {
+            const interactions = JSON.parse(localStorage.getItem('fsmpPlayerInteractions')) || {};
+            
+            // Update all interaction buttons with saved counts
+            document.querySelectorAll('.interaction-btn').forEach(button => {
+                const playerName = button.getAttribute('data-player');
+                const interactionType = button.classList.contains('like') ? 'likes' : 
+                                      button.classList.contains('dislike') ? 'dislikes' : 'comments';
+                
+                if (interactions[playerName] && interactions[playerName][interactionType]) {
+                    const countElement = button.querySelector('.interaction-count');
+                    countElement.textContent = interactions[playerName][interactionType];
+                }
+            });
+        }
+
+        // Ranking System Functionality
+        function initializeRankingSystem() {
+            // Load saved players from localStorage
+            loadSavedPlayers();
+            
+            // Add player form submission
+            document.getElementById('add-player-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const playerName = document.getElementById('player-name').value.trim();
+                const playerRank = document.getElementById('player-rank').value;
+                
+                if (playerName && playerRank) {
+                    addPlayerToRank(playerName, playerRank);
+                    savePlayer(playerName, playerRank);
+                    
+                    // Reset form
+                    document.getElementById('add-player-form').reset();
+                }
+            });
+
+            // Add event listeners to existing player actions
+            initializePlayerActions();
+        }
+
+        function initializePlayerActions() {
+            // Add event listeners to all existing edit and delete buttons
+            document.querySelectorAll('.player-action.edit').forEach(button => {
+                button.addEventListener('click', handleEditPlayerRank);
+            });
+            
+            document.querySelectorAll('.player-action.delete').forEach(button => {
+                button.addEventListener('click', handleDeletePlayerRank);
+            });
+        }
+
+        function addPlayerToRank(playerName, rank) {
+            const rankList = document.getElementById(`${rank.toLowerCase()}-rank-players`);
+            
+            // Create player element
+            const playerElement = document.createElement('li');
+            playerElement.className = 'rank-player';
+            
+            // Create avatar from initials
+            const initials = getInitials(playerName);
+            
+            playerElement.innerHTML = `
+                <div class="player-avatar">${initials}</div>
+                <div class="player-name">${playerName}</div>
+                <div class="player-interaction">
+                    <button class="interaction-btn like" data-player="${playerName}">
+                        <i class="fas fa-thumbs-up"></i>
+                        <span class="interaction-count">0</span>
+                    </button>
+                    <button class="interaction-btn dislike" data-player="${playerName}">
+                        <i class="fas fa-thumbs-down"></i>
+                        <span class="interaction-count">0</span>
+                    </button>
+                    <button class="interaction-btn comment" data-player="${playerName}">
+                        <i class="fas fa-comment"></i>
+                        <span class="interaction-count">0</span>
+                    </button>
+                </div>
+                <div class="player-actions" style="display: none;">
+                    <button class="player-action edit" title="Edit Name">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="player-action delete" title="Remove Player">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Add event listeners to the new buttons
+            playerElement.querySelector('.player-action.edit').addEventListener('click', handleEditPlayerRank);
+            playerElement.querySelector('.player-action.delete').addEventListener('click', handleDeletePlayerRank);
+            
+            // Add event listeners to interaction buttons
+            playerElement.querySelectorAll('.interaction-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const playerName = this.getAttribute('data-player');
+                    const interactionType = this.classList.contains('like') ? 'like' : 
+                                          this.classList.contains('dislike') ? 'dislike' : 'comment';
+                    
+                    handlePlayerInteraction(playerName, interactionType, this);
+                });
+            });
+            
+            rankList.appendChild(playerElement);
+        }
+
+        function savePlayer(name, rank) {
+            let players = JSON.parse(localStorage.getItem('fsmpRankPlayers')) || {};
+            
+            if (!players[rank]) {
+                players[rank] = [];
+            }
+            
+            // Check if player already exists
+            if (!players[rank].includes(name)) {
+                players[rank].push(name);
+                localStorage.setItem('fsmpRankPlayers', JSON.stringify(players));
+            }
+        }
+
+        function removePlayer(name, rank) {
+            let players = JSON.parse(localStorage.getItem('fsmpRankPlayers')) || {};
+            
+            if (players[rank]) {
+                players[rank] = players[rank].filter(player => player !== name);
+                localStorage.setItem('fsmpRankPlayers', JSON.stringify(players));
+            }
+        }
+
+        function loadSavedPlayers() {
+            const players = JSON.parse(localStorage.getItem('fsmpRankPlayers')) || {};
+            
+            for (const [rank, playerList] of Object.entries(players)) {
+                playerList.forEach(player => {
+                    addPlayerToRank(player, rank);
+                });
+            }
+        }
+
+        function handleEditPlayerRank(e) {
+            const playerElement = e.target.closest('.rank-player');
+            const playerNameElement = playerElement.querySelector('.player-name');
+            const currentName = playerNameElement.textContent;
+            
+            // Create input field
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'player-name-input';
+            input.value = currentName;
+            
+            // Replace player name with input field
+            playerNameElement.replaceWith(input);
+            input.focus();
+            
+            // Handle input submission
+            const handleInputSubmit = function(e) {
+                if (e.key === 'Enter' || e.type === 'blur') {
+                    const newName = input.value.trim();
+                    if (newName && newName !== currentName) {
+                        playerNameElement.textContent = newName;
+                        
+                        // Update in localStorage
+                        const rank = playerElement.closest('.rank-tier').querySelector('.rank-icon').textContent;
+                        removePlayer(currentName, rank);
+                        savePlayer(newName, rank);
+                    }
+                    
+                    // Replace input with player name
+                    input.replaceWith(playerNameElement);
+                    input.removeEventListener('keydown', handleInputSubmit);
+                    input.removeEventListener('blur', handleInputSubmit);
+                }
+            };
+            
+            input.addEventListener('keydown', handleInputSubmit);
+            input.addEventListener('blur', handleInputSubmit);
+        }
+
+        function handleDeletePlayerRank(e) {
+            const playerElement = e.target.closest('.rank-player');
+            const playerName = playerElement.querySelector('.player-name').textContent;
+            const rank = playerElement.closest('.rank-tier').querySelector('.rank-icon').textContent;
+            
+            // Remove from DOM
+            playerElement.remove();
+            
+            // Remove from localStorage
+            removePlayer(playerName, rank);
+        }
+
+        // Authentication System
+        function setupAuthentication() {
+            const loginBtn = document.getElementById('login-btn');
+            const signupBtn = document.getElementById('signup-btn');
+            const authModal = document.getElementById('auth-modal');
+            const authTabs = document.querySelectorAll('.auth-tab');
+            const authForms = document.querySelectorAll('.auth-form');
+            const closeAuthModal = function() {
+                authModal.classList.remove('active');
+            };
+            
+            // Open auth modal
+            loginBtn.addEventListener('click', function() {
+                authModal.classList.add('active');
+                switchAuthTab('login');
+            });
+            
+            signupBtn.addEventListener('click', function() {
+                authModal.classList.add('active');
+                switchAuthTab('signup');
+            });
+            
+            // Switch auth tabs
+            authTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    switchAuthTab(tabName);
+                });
+            });
+            
+            // Close modal when clicking outside
+            authModal.addEventListener('click', function(e) {
+                if (e.target.id === 'auth-modal') {
+                    closeAuthModal();
+                }
+            });
+            
+            // Password strength indicator
+            document.getElementById('signup-password').addEventListener('input', function(e) {
+                const password = e.target.value;
+                const strengthBar = document.getElementById('password-strength');
+                let strength = 0;
+                
+                if (password.length >= 8) strength++;
+                if (/[A-Z]/.test(password)) strength++;
+                if (/[0-9]/.test(password)) strength++;
+                if (/[^A-Za-z0-9]/.test(password)) strength++;
+                
+                strengthBar.className = 'password-strength';
+                if (strength > 0) {
+                    strengthBar.classList.add(['weak', 'medium', 'strong'][strength - 1]);
+                }
+            });
+            
+            // Form submissions
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Simple demo login
+                const username = document.getElementById('login-username').value;
+                if (username) {
+                    showNotification(`Welcome back, ${username}!`, 'success');
+                    closeAuthModal();
+                }
+            });
+            
+            document.getElementById('signup-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Simple demo signup
+                const username = document.getElementById('signup-username').value;
+                if (username) {
+                    showNotification(`Account created for ${username}!`, 'success');
+                    closeAuthModal();
+                }
+            });
+            
+            function switchAuthTab(tabName) {
+                // Update tabs
+                authTabs.forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`.auth-tab[data-tab="${tabName}"]`).classList.add('active');
+                
+                // Update forms
+                authForms.forEach(form => {
+                    form.classList.remove('active');
+                });
+                document.getElementById(`${tabName}-form`).classList.add('active');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--warning)' : 'var(--primary)'};
+                color: white;
+                border-radius: 5px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                z-index: 3000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(30, 39, 46, 0.98)';
+                header.style.padding = '10px 0';
+            } else {
+                header.style.background = 'rgba(30, 39, 46, 0.95)';
+                header.style.padding = '15px 0';
+            }
+        });
+
+        // Copy Discord link functionality
+        document.querySelector('.server-ip .btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const discordLink = document.querySelector('.ip-address').textContent;
+            navigator.clipboard.writeText(discordLink).then(() => {
+                const originalText = this.textContent;
+                this.textContent = 'Copied!';
+                setTimeout(() => {
+                    this.textContent = originalText;
+                }, 2000);
+            });
+        });
+
+        // Add floating animation to feature cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .team-member, .rank-tier, .tier-category').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
